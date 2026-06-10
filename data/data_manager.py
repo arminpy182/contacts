@@ -46,11 +46,12 @@ def save_data(data):
         json.dump(data, file, ensure_ascii=False, indent=4)
 
 
-def get_all_contacts():
+def get_all_contacts(show_hidden=False):
     data = load_data()
     contacts = data.get("contacts", [])
+    if not show_hidden:
+        contacts = [c for c in contacts if not c.get("hidden", False)]
     return sorted(contacts, key=lambda c: (c.get("last_name", ""), c.get("first_name", "")))
-
 
 def get_contact_by_id(contact_id):
     data = load_data()
@@ -100,13 +101,23 @@ def delete_contact(contact_id):
     return True
 
 
+def toggle_hidden(contact_id):
+    data = load_data()
+    for contact in data["contacts"]:
+        if contact["id"] == contact_id:
+            contact["hidden"] = not contact.get("hidden", False)
+            contact["updated_at"] = _get_timestamp()
+            save_data(data)
+            return True
+    return False
+
+
 def search_contacts(query):
     if not query.strip():
         return get_all_contacts()
     query = query.strip().lower()
     return [c for c in get_all_contacts()
             if query in f"{c.get('first_name','')} {c.get('last_name','')} {c.get('phone','')}".lower()]
-
 
 def get_favorite_contacts():
     return [c for c in get_all_contacts() if c.get("favorite") == True]

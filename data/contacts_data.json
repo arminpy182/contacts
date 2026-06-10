@@ -1,0 +1,47 @@
+{
+    "metadata": {
+        "version": "1.0",
+        "created_at": "2026-06-10T11:09:53",
+        "last_modified": "2026-06-10T12:45:17",
+        "total_contacts": 3
+    },
+    "contacts": [
+        {
+            "id": "78f02bde-de30-4692-9bf2-ba47bf2a6777",
+            "first_name": "آرمين",
+            "last_name": "پويا",
+            "phone": "09022718736",
+            "email": "",
+            "group": "خانواده",
+            "notes": "",
+            "favorite": true,
+            "created_at": "2026-06-10T11:11:24",
+            "updated_at": "2026-06-10T12:44:49",
+            "hidden": true
+        },
+        {
+            "id": "c6e71831-784a-491f-8def-0714437efaff",
+            "first_name": "مهدي",
+            "last_name": "مشايخي فر",
+            "phone": "09917927387",
+            "email": "",
+            "group": "دوستان",
+            "notes": "سلام",
+            "favorite": true,
+            "created_at": "2026-06-10T11:12:05",
+            "updated_at": "2026-06-10T12:45:17"
+        },
+        {
+            "id": "1a6b15a8-cffb-46c1-8257-7b1b240ad388",
+            "first_name": "armin",
+            "last_name": "hsjhs",
+            "phone": "09132256110",
+            "email": "",
+            "group": "سایر",
+            "notes": "",
+            "favorite": false,
+            "created_at": "2026-06-10T12:07:36",
+            "updated_at": "2026-06-10T12:07:36"
+        }
+    ]
+}

@@ -53,6 +53,27 @@ class ContactListPanel(tk.Frame):
         self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfig(self.canvas_window, width=e.width))
         self.canvas.bind("<MouseWheel>", lambda e: self.canvas.yview_scroll(int(-1*(e.delta/120)), "units"))
     
+    def _get_group_letter(self, contact):
+        """اول حرف نام مخاطب را برمیگرداند"""
+        first_name = contact.get("first_name", "")
+        last_name = contact.get("last_name", "")
+        name = first_name or last_name
+        if not name:
+            return "#"
+        
+        first_char = name[0]
+        
+        # حروف فارسی
+        persian_chars = "ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی"
+        if first_char in persian_chars:
+            return first_char
+        
+        # حروف انگلیسی
+        if first_char.isalpha():
+            return first_char.upper()
+        
+        return "#"
+    
     def update_list(self, contacts):
         for widget in self.list_frame.winfo_children():
             widget.destroy()
@@ -68,8 +89,37 @@ class ContactListPanel(tk.Frame):
                      fg=TEXT_MUTED, justify="center").pack(pady=40)
             return
         
+        # گروه‌بندی بر اساس حرف اول
+        groups = {}
         for contact in contacts:
-            self._create_contact_row(contact)
+            letter = self._get_group_letter(contact)
+            if letter not in groups:
+                groups[letter] = []
+            groups[letter].append(contact)
+        
+        # مرتب‌سازی - فارسی اول، بعد انگلیسی، بعد #
+        persian_letters = sorted([k for k in groups.keys() if k in "ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی"])
+        english_letters = sorted([k for k in groups.keys() if k.isalpha() and k not in "ابپتثجچحخدذرزژسشصضطظعغفقکگلمنوهی"])
+        other_letters = [k for k in groups.keys() if k == "#"]
+        
+        sorted_letters = persian_letters + english_letters + other_letters
+        
+        # نمایش هر گروه
+        for letter in sorted_letters:
+            # برچسب حرف
+            tk.Label(
+                self.list_frame,
+                text=letter,
+                font=FONT_LABEL,
+                bg=BG_PRIMARY,
+                fg=ACCENT,
+                anchor="w",
+                padx=PAD_MEDIUM
+            ).pack(fill="x", pady=(PAD_SMALL, 0))
+            
+            # مخاطبین این گروه
+            for contact in groups[letter]:
+                self._create_contact_row(contact)
     
     def _create_contact_row(self, contact):
         contact_id = contact["id"]
@@ -106,7 +156,6 @@ class ContactListPanel(tk.Frame):
                                bg=row.cget("bg"), fg=TEXT_SECONDARY, anchor="w")
         phone_label.pack(fill="x")
         
-        # رویداد کلیک روی همه عناصر ردیف
         all_widgets = [row, avatar_frame, avatar_label, info_frame, name_label, phone_label]
         for widget in all_widgets:
             widget.bind("<Button-1>", lambda e, cid=contact_id: self._on_row_click(cid))
